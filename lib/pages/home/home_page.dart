@@ -1,18 +1,36 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:location/location.dart';
 import 'package:weather_poc/controller/controller.dart';
 import 'package:weather_poc/model/model.dart';
-import 'package:weather_poc/pages/pages.dart';
 import 'package:weather_poc/styles/styles.dart';
+import 'package:weather_poc/util/util.dart';
 
-class HomeScreen extends StatelessWidget {
+class HomeScreen extends StatefulWidget {
+  const HomeScreen({Key? key}) : super(key: key);
+
+  @override
+  _HomeScreenState createState() => _HomeScreenState();
+}
+
+class _HomeScreenState extends State<HomeScreen> {
+  final GlobalController _globalController = Get.find<GlobalController>();
+
+  @override
+  void initState() {
+    WidgetsBinding.instance!.addPostFrameCallback((_) async {
+      LocationData location = await LocationUtil.getLocation();
+      _globalController.fetchCurrentWeatherData(location, 'metric');
+    });
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: GetBuilder<GlobalController>(builder: (controller) {
-        return LoadingOverlay(
-          isLoading: controller.isLoading,
-          child: Stack(
+      body: GetBuilder<GlobalController>(
+        builder: (controller) {
+          return Stack(
             children: [
               _backgroundImage(controller),
               Container(
@@ -40,9 +58,9 @@ class HomeScreen extends StatelessWidget {
                 ),
               ),
             ],
-          ),
-        );
-      }),
+          );
+        },
+      ),
     );
   }
 
@@ -68,12 +86,18 @@ class HomeScreen extends StatelessWidget {
           child: Image.network(
             'http://openweathermap.org/img/wn/${controller.weather.value.icon}@2x.png',
             color: ColorPallet.white,
+            loadingBuilder: (context, widget, __) {
+              return widget;
+            },
+            errorBuilder: (_, __, ___) {
+              return Container();
+            },
           ),
         ),
         Text(
-          controller.weatherMaster.value.temperature!.temp.toString() +
-                  ' \u2103' ??
-              "",
+          (controller.weatherMaster.value.temperature != null)
+              ? '${controller.weatherMaster.value.temperature!.temp} \u2103'
+              : '-',
           style: TextStyles.heading1,
           textAlign: TextAlign.center,
         ),
@@ -82,31 +106,35 @@ class HomeScreen extends StatelessWidget {
   }
 
   Widget _bottomInformationView(Temperature? temperature) {
-    return Container(
-      padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 12),
-      decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(12),
-          border: Border.all(color: Colors.white)),
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.center,
-        mainAxisAlignment: MainAxisAlignment.spaceAround,
-        children: [
-          _titleValueView('Min', '${temperature!.tempMin ?? '-'} \u2103'),
-          Container(
-            color: Colors.white,
-            width: 1,
-            height: 40,
-          ),
-          _titleValueView('Max', '${temperature.tempMax ?? '-'} \u2103'),
-          Container(
-            color: Colors.white,
-            width: 1,
-            height: 40,
-          ),
-          _titleValueView('Pressure', '${temperature.pressure ?? '-'}'),
-        ],
-      ),
-    );
+    if (temperature != null) {
+      return Container(
+        padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 12),
+        decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(12),
+            border: Border.all(color: Colors.white)),
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.center,
+          mainAxisAlignment: MainAxisAlignment.spaceAround,
+          children: [
+            _titleValueView('Min', '${temperature.tempMin ?? '-'} \u2103'),
+            Container(
+              color: Colors.white,
+              width: 1,
+              height: 40,
+            ),
+            _titleValueView('Max', '${temperature.tempMax ?? '-'} \u2103'),
+            Container(
+              color: Colors.white,
+              width: 1,
+              height: 40,
+            ),
+            _titleValueView('Pressure', '${temperature.pressure ?? '-'}'),
+          ],
+        ),
+      );
+    } else {
+      return const SizedBox.shrink();
+    }
   }
 
   Column _titleValueView(String title, String value) {
@@ -114,7 +142,7 @@ class HomeScreen extends StatelessWidget {
       children: [
         Text(
           title,
-          style: TextStyles.heading5,
+          style: TextStyles.heading4,
           textAlign: TextAlign.center,
         ),
         Text(
@@ -127,14 +155,16 @@ class HomeScreen extends StatelessWidget {
   }
 
   String getImagePath(DateTime? dt) {
-    int hours = dt!.hour;
     String path = Assets.backgroundCloudy;
-    if (hours >= 1 && hours <= 12) {
-      path = Assets.backgroundCloudy;
-    } else if (hours >= 12 && hours <= 21) {
-      path = Assets.backgroundSunny;
-    } else if (hours >= 21 && hours <= 24) {
-      path = Assets.backgroundNight;
+    if (dt != null) {
+      int hours = dt.hour;
+      if (hours >= 1 && hours <= 12) {
+        path = Assets.backgroundCloudy;
+      } else if (hours >= 12 && hours <= 21) {
+        path = Assets.backgroundSunny;
+      } else if (hours >= 21 && hours <= 24) {
+        path = Assets.backgroundNight;
+      }
     }
     return path;
   }

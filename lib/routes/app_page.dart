@@ -8,8 +8,12 @@ class AppPage {
   static var list = [
     GetPage(
       name: AppRoutes.HOME,
-      page: () => HomeScreen(),
+      page: () => const HomeScreen(),
       binding: ControllerBindings(),
+    ),
+    GetPage(
+      name: AppRoutes.SPLASH,
+      page: () => const SplashScreen(),
     ),
   ];
 }

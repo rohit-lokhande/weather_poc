@@ -4,8 +4,7 @@ import 'package:flutter/foundation.dart';
 import 'package:http/http.dart' as http;
 
 class BaseNetwork {
-  static String baseUrl =
-      "http://api.openweathermap.org/data/2.5";
+  static String baseUrl = "http://api.openweathermap.org/data/2.5";
 
   static Future<Map<String, dynamic>> get(String partUrl) async {
     String fullUrl = baseUrl;
@@ -20,9 +19,8 @@ class BaseNetwork {
 
   static Future<Map<String, dynamic>> _processResponse(
       http.Response response) async {
-    final body = response.body ?? "";
-    if (body.isNotEmpty) {
-      final jsonBody = json.decode(body);
+    if (response.body.isNotEmpty) {
+      final jsonBody = json.decode(response.body);
       return jsonBody;
     } else {
       print("processResponse error");

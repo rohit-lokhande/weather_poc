@@ -8,9 +8,9 @@ part of 'temperature.dart';
 
 Temperature _$TemperatureFromJson(Map<String, dynamic> json) => Temperature(
       temp: (json['temp'] as num?)?.toDouble(),
-      feelsLike: (json['feelsLike'] as num?)?.toDouble(),
-      tempMin: (json['tempMin'] as num?)?.toDouble(),
-      tempMax: (json['tempMax'] as num?)?.toDouble(),
+      feelsLike: (json['feels_like'] as num?)?.toDouble(),
+      tempMin: (json['temp_min'] as num?)?.toDouble(),
+      tempMax: (json['temp_max'] as num?)?.toDouble(),
       pressure: json['pressure'] as int?,
       humidity: json['humidity'] as int?,
     );
@@ -18,9 +18,9 @@ Temperature _$TemperatureFromJson(Map<String, dynamic> json) => Temperature(
 Map<String, dynamic> _$TemperatureToJson(Temperature instance) =>
     <String, dynamic>{
       'temp': instance.temp,
-      'feelsLike': instance.feelsLike,
-      'tempMin': instance.tempMin,
-      'tempMax': instance.tempMax,
+      'feels_like': instance.feelsLike,
+      'temp_min': instance.tempMin,
+      'temp_max': instance.tempMax,
       'pressure': instance.pressure,
       'humidity': instance.humidity,
     };

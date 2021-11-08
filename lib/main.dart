@@ -12,7 +12,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return GetMaterialApp(
-      initialRoute: AppRoutes.HOME,
+      initialRoute: AppRoutes.SPLASH,
       getPages: AppPage.list,
       theme: ThemeData.light(),
     );

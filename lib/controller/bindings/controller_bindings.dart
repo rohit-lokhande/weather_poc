@@ -6,7 +6,7 @@ import 'bindings.dart';
 class ControllerBindings extends Bindings {
   @override
   void dependencies() {
-    bindingCovidDataSource();
+    bindingWeatherDataSource();
     bindingGlobalController();
   }
 }

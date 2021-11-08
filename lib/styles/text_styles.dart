@@ -21,10 +21,10 @@ class TextStyles {
 
   static const heading4 = TextStyle(
     color: ColorPallet.white,
-    fontSize: 20,
+    fontSize: 16,
   );
   static const heading5 = TextStyle(
     color: ColorPallet.white,
-    fontSize: 18,
+    fontSize: 14,
   );
 }

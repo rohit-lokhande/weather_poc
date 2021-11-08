@@ -2,5 +2,5 @@ import 'package:get/get.dart';
 import 'package:weather_poc/network/network.dart';
 
 
-void bindingCovidDataSource() =>
+void bindingWeatherDataSource() =>
     Get.lazyPut<WeatherDataSource>(() => WeatherDataSource());
